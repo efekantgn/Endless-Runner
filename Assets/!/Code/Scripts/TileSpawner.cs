@@ -88,13 +88,15 @@ public class TileSpawner : MonoBehaviour
 
     private void DeletePreviusTile()
     {
+        //TODO:ObjectPool
         while (currentTiles.Count != 1)
         {
             GameObject tile = currentTiles[0];
             currentTiles.RemoveAt(0);
             Destroy(tile);
         }
-        while (currentObstacles.Count != 1)
+        //TODO:ObjectPool
+        while (currentObstacles.Count != 0)
         {
             GameObject obstacle = currentObstacles[0];
             currentObstacles.RemoveAt(0);
