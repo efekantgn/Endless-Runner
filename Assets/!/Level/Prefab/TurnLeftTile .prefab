@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8685947419737004240}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,8 +43,8 @@ GameObject:
   - component: {fileID: 9033230039586398591}
   - component: {fileID: 1645723726981502830}
   - component: {fileID: 4557100820168075532}
-  m_Layer: 0
-  m_Name: Cube
+  m_Layer: 7
+  m_Name: TurnThreshold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,7 +130,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -146,7 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4763623746565589509}
   - component: {fileID: 4596559864864571088}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: 'TurnLeftTile '
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -8,20 +8,17 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class InputHandler : MonoBehaviour
 {
-    public static InputHandler Instance { get; private set; }
-
     private PlayerInput playerInput;
     private InputAction turnAction;
     private InputAction jumpAction;
     private InputAction slideAction;
 
-    public Action OnPlayerTurnPerformedAction;
-    public Action OnPlayerJumpPerformedAction;
-    public Action OnPlayerSlidePerformedAction;
+    public Action<InputAction.CallbackContext> OnPlayerTurnPerformedAction;
+    public Action<InputAction.CallbackContext> OnPlayerJumpPerformedAction;
+    public Action<InputAction.CallbackContext> OnPlayerSlidePerformedAction;
 
     private void Awake()
     {
-        Instance = this;
         playerInput = GetComponent<PlayerInput>();
         turnAction = playerInput.actions["Turn"];
         jumpAction = playerInput.actions["Jump"];
@@ -41,8 +38,8 @@ public class InputHandler : MonoBehaviour
         slideAction.performed -= OnPlayerSlidePerformed;
     }
 
-    private void OnPlayerSlidePerformed(InputAction.CallbackContext context) => OnPlayerSlidePerformedAction?.Invoke();
-    private void OnPlayerJumpPerformed(InputAction.CallbackContext context) => OnPlayerJumpPerformedAction?.Invoke();
-    private void OnPlayerTurnPerformed(InputAction.CallbackContext context) => OnPlayerTurnPerformedAction?.Invoke();
+    private void OnPlayerSlidePerformed(InputAction.CallbackContext context) => OnPlayerSlidePerformedAction?.Invoke(context);
+    private void OnPlayerJumpPerformed(InputAction.CallbackContext context) => OnPlayerJumpPerformedAction?.Invoke(context);
+    private void OnPlayerTurnPerformed(InputAction.CallbackContext context) => OnPlayerTurnPerformedAction?.Invoke(context);
 
 }

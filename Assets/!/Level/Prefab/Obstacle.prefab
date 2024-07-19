@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3675972907906488970}
   - component: {fileID: 1863227286892920462}
   - component: {fileID: 6184533773389077769}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +362,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7255328134954999288}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

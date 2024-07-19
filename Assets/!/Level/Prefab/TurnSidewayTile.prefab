@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3755490637632076908}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3678279610657053663}
   - component: {fileID: 2086420224528657572}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TurnSidewayTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,8 +94,8 @@ GameObject:
   - component: {fileID: 5483082516076963962}
   - component: {fileID: 1184116068170561438}
   - component: {fileID: 2474116459273883655}
-  m_Layer: 0
-  m_Name: Cube
+  m_Layer: 7
+  m_Name: TurnThreshold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,7 +181,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
