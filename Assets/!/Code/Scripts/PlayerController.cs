@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Enums;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
 
     private int slidingAnimationID;
     private bool sliding;
+    private bool turning;
     private float score = 0;
 
     [SerializeField] private UnityEvent<Vector3> turnEvent;
@@ -49,6 +51,17 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnPlayerJumpPerformedAction += JumpPerformed;
         inputHandler.OnPlayerSlidePerformedAction += SlidePerformed;
         inputHandler.OnPlayerTurnPerformedAction += TurnPerformed;
+        inputHandler.OnPlayerSwipeAction += Swipe;
+    }
+
+
+    private void OnDisable()
+    {
+        inputHandler.OnPlayerJumpPerformedAction -= JumpPerformed;
+        inputHandler.OnPlayerSlidePerformedAction -= SlidePerformed;
+        inputHandler.OnPlayerTurnPerformedAction -= TurnPerformed;
+        inputHandler.OnPlayerSwipeAction -= Swipe;
+
     }
     private void Start()
     {
@@ -68,28 +81,45 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(transform.forward * playerSpeed * Time.deltaTime);
         ApplyGravity();
+
+        if (playerSpeed < maxPlayerSpeed)
+        {
+            playerSpeed += Time.deltaTime * playerSpeedIncreaseRate;
+            gravity = initialGravityValue - playerSpeed;
+
+            if (animator.speed < 1.25f)
+            {
+                animator.speed += (1 / playerSpeed) * Time.deltaTime;
+            }
+        }
     }
 
 
-    private void OnDisable()
+
+    private void Swipe(Vector2 swipeDirection)
     {
-        inputHandler.OnPlayerJumpPerformedAction -= JumpPerformed;
-        inputHandler.OnPlayerSlidePerformedAction -= SlidePerformed;
-        inputHandler.OnPlayerTurnPerformedAction -= TurnPerformed;
-    }
+        if (swipeDirection.y != 0) Turn(swipeDirection.y);
+        else if (swipeDirection.x == 1) Jump();
+        else if (swipeDirection.x == -1) SlideStart();
 
+    }
     private void TurnPerformed(InputAction.CallbackContext context)
     {
-        Vector3? turnPosition = CheckTurn(context.ReadValue<float>());
+        Turn(context.ReadValue<float>());
+    }
+
+    private void Turn(float turnValue)
+    {
+        Vector3? turnPosition = CheckTurn(turnValue);
         if (!turnPosition.HasValue)
         {
             GameOver();
             return;
         }
 
-        Vector3 targetDirection = Quaternion.AngleAxis(90 * context.ReadValue<float>(), Vector3.up) * movementDirection;
+        Vector3 targetDirection = Quaternion.AngleAxis(90 * turnValue, Vector3.up) * movementDirection;
         turnEvent?.Invoke(targetDirection);
-        Turn(context.ReadValue<float>(), turnPosition.Value);
+        Turn(turnValue, turnPosition.Value);
     }
 
     private void Turn(float turnValue, Vector3 turnPosition)
@@ -105,6 +135,11 @@ public class PlayerController : MonoBehaviour
     }
 
     private void SlidePerformed(InputAction.CallbackContext context)
+    {
+        SlideStart();
+    }
+
+    private void SlideStart()
     {
         if (IsGrounded() && !sliding)
         {
@@ -122,7 +157,7 @@ public class PlayerController : MonoBehaviour
 
         sliding = true;
         animator.Play(slidingAnimationID);
-        yield return new WaitForSeconds(slideAnimationClip.length);
+        yield return new WaitForSeconds(slideAnimationClip.length / animator.speed);
         controller.height *= 2;
         controller.center = originalControllerCenter;
 
@@ -132,13 +167,17 @@ public class PlayerController : MonoBehaviour
 
     private void JumpPerformed(InputAction.CallbackContext context)
     {
+        Jump();
+    }
+
+    private void Jump()
+    {
         if (IsGrounded())
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * gravity * -3f);
             controller.Move(playerVelocity * Time.deltaTime);
         }
     }
-
 
     private Vector3? CheckTurn(float turnValue)
     {

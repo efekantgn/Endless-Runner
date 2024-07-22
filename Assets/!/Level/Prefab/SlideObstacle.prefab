@@ -11,12 +11,12 @@ PrefabInstance:
     - target: {fileID: 1382956775640311186, guid: 44f34c2b8919bb24cb9cd9ac37874058,
         type: 3}
       propertyPath: m_Name
-      value: Obstacle Variant
+      value: SlideObstacle
       objectReference: {fileID: 0}
     - target: {fileID: 5223473000270764526, guid: 44f34c2b8919bb24cb9cd9ac37874058,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 7255328134954999288, guid: 44f34c2b8919bb24cb9cd9ac37874058,
         type: 3}
