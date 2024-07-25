@@ -48,6 +48,8 @@ public class InputHandler : MonoBehaviour
         turnAction.performed -= OnPlayerTurnPerformed;
         jumpAction.performed -= OnPlayerJumpPerformed;
         slideAction.performed -= OnPlayerSlidePerformed;
+        primaryContactAction.performed -= OnPlayerPrimaryContactPerformed;
+        primaryContactAction.canceled -= OnPlayerPrimaryContactCanceled;
     }
 
     private void OnPlayerSlidePerformed(InputAction.CallbackContext context) => OnPlayerSlidePerformedAction?.Invoke(context);
@@ -58,19 +60,24 @@ public class InputHandler : MonoBehaviour
     private void OnPlayerPrimaryContactCanceled(InputAction.CallbackContext context)
     {
         Vector2 delta = currentPos - initialPos;
-
         Vector2 direction = Vector2.zero;
-        if (Mathf.Abs(delta.x) < swipeResistance)
+
+        if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
         {
-            direction.x = Mathf.Clamp(delta.x, -1, 1);
+            if (Mathf.Abs(delta.x) > swipeResistance)
+            {
+                direction.x = Mathf.Clamp(delta.x, -1, 1);
+            }
+
+        }
+        else
+        {
+            if (Mathf.Abs(delta.y) > swipeResistance)
+            {
+                direction.y = Mathf.Clamp(delta.y, -1, 1);
+            }
         }
 
-        if (Mathf.Abs(delta.y) < swipeResistance)
-        {
-            direction.y = Mathf.Clamp(delta.y, -1, 1);
-        }
-        Debug.Log(delta);
-        Debug.Log(direction);
         if (direction != Vector2.zero)
         {
             OnPlayerSwipeAction?.Invoke(direction);
