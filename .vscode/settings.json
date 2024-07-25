@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Endless Runner.sln"
+    "dotnet.defaultSolution": "Endless Runner.sln",
+    "unity-code-snippets.style": "kr"
 }

@@ -94,7 +94,7 @@ public class GameOver : MonoBehaviour
                     {
                         leaderboardName += player.id + "\n";
                     }
-                    leaderboardScore += members[i].score;
+                    leaderboardScore += members[i].score + "\n";
                 }
                 leaderboardNameText.SetText(leaderboardName);
                 leaderboardScoreText.SetText(leaderboardScore);

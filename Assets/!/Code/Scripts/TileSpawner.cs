@@ -8,6 +8,7 @@ public class TileSpawner : MonoBehaviour
 {
 
     [SerializeField] private int tileStartCount = 10;
+    [SerializeField] private int tileSafeCount = 5;
     [SerializeField] private int minStraightTiles = 3;
     [SerializeField] private int maxStrightTiles = 15;
 
@@ -28,7 +29,7 @@ public class TileSpawner : MonoBehaviour
         currentTiles = new List<GameObject>();
         currentObstacles = new List<GameObject>();
 
-        UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+        Random.InitState(System.DateTime.Now.Millisecond);
         for (int i = 0; i < tileStartCount; i++)
         {
             SpawnTile(startingTile.GetComponent<Tile>());
@@ -47,12 +48,12 @@ public class TileSpawner : MonoBehaviour
         if (spawnObstacle) SpawnObstacle();
 
         if (tile.type == Enums.TileType.STRAIGHT)
-            currentTileLocation += Vector3.Scale(prevTile.GetComponentInChildren<Renderer>().bounds.size, currentTileDirection);
+            currentTileLocation += Vector3.Scale(prevTile.GetComponentInChildren<Renderer>().bounds.size - new Vector3(.4f, 0, .4f)/*Modeldeki Yeşil Zemin Fazlalığı*/, currentTileDirection);
     }
 
     private void SpawnObstacle()
     {
-        if (Random.value > 1f) return;
+        if (Random.value > .3f) return;
 
         GameObject obstaclePrefab = SelectRandomGameObjectFromList(obstacles);
         Quaternion newObstacleRotation = obstaclePrefab.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
@@ -66,22 +67,17 @@ public class TileSpawner : MonoBehaviour
     {
         currentTileDirection = direction;
         DeletePreviusTile();
+        currentTileLocation += Vector3.Scale(prevTile.GetComponentInChildren<Renderer>().bounds.size - new Vector3(.4f, 0, .4f)/*Modeldeki Yeşil Zemin Fazlalığı*/, currentTileDirection);
 
-        Vector3 tilePlacementScale;
-        if (prevTile.GetComponent<Tile>().type == Enums.TileType.SIDEWAYS)
+        for (int i = 0; i < tileSafeCount; i++)
         {
-            tilePlacementScale = Vector3.Scale(prevTile.GetComponentInChildren<Renderer>().bounds.size / 2 + (Vector3.one * startingTile.GetComponentInChildren<BoxCollider>().bounds.size.z / 2), currentTileDirection);
+            SpawnTile(startingTile.GetComponent<Tile>(), false);
         }
-        else
-        {
-            tilePlacementScale = Vector3.Scale(prevTile.GetComponentInChildren<Renderer>().bounds.size + (Vector3.one * 7.5f) + (Vector3.one * startingTile.GetComponentInChildren<BoxCollider>().size.z / 2), currentTileDirection);
 
-        }
-        currentTileLocation += tilePlacementScale;
-        int currentPathLenght = UnityEngine.Random.Range(minStraightTiles, maxStrightTiles);
+        int currentPathLenght = Random.Range(minStraightTiles, maxStrightTiles);
         for (int i = 0; i < currentPathLenght; i++)
         {
-            SpawnTile(startingTile.GetComponent<Tile>(), (i == 0) ? false : true);
+            SpawnTile(startingTile.GetComponent<Tile>(), (i % 3 == 0) ? true : false);
         }
         SpawnTile(SelectRandomGameObjectFromList(turnTiles).GetComponent<Tile>(), false);
     }
@@ -108,6 +104,6 @@ public class TileSpawner : MonoBehaviour
     {
         if (list.Count == 0) return null;
 
-        return list[UnityEngine.Random.Range(0, list.Count)];
+        return list[Random.Range(0, list.Count)];
     }
 }

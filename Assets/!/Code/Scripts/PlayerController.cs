@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask turnLayer;
     [SerializeField] private LayerMask obstacleLayer;
+    [SerializeField] private AnimationClip jumpAnimationClip;
     [SerializeField] private AnimationClip slideAnimationClip;
 
     [SerializeField] private float playerSpeed;
@@ -29,9 +30,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Animator animator;
 
+    private int jumpAnimationID;
     private int slidingAnimationID;
     private bool sliding;
-    private bool turning;
     private float score = 0;
 
     [SerializeField] private UnityEvent<Vector3> turnEvent;
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
 
         slidingAnimationID = Animator.StringToHash("Slide");
+        jumpAnimationID = Animator.StringToHash("Jump");
     }
     private void OnEnable()
     {
@@ -94,18 +96,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     private void Swipe(Vector2 swipeDirection)
     {
-        if (swipeDirection.y != 0) Turn(swipeDirection.y);
-        else if (swipeDirection.x == 1) Jump();
-        else if (swipeDirection.x == -1) SlideStart();
+        if (swipeDirection.x != 0) Turn(swipeDirection.x);
+        else if (swipeDirection.y == 1) StartCoroutine(Jump());
+        else if (swipeDirection.y == -1) StartCoroutine(Slide());
 
     }
     private void TurnPerformed(InputAction.CallbackContext context)
     {
+        if (!context.performed) return;
         Turn(context.ReadValue<float>());
+    }
+
+    private void SlidePerformed(InputAction.CallbackContext context)
+    {
+        StartCoroutine(Slide());
+    }
+
+    private void JumpPerformed(InputAction.CallbackContext context)
+    {
+        StartCoroutine(Jump());
     }
 
     private void Turn(float turnValue)
@@ -134,21 +145,10 @@ public class PlayerController : MonoBehaviour
         movementDirection = transform.forward.normalized;
     }
 
-    private void SlidePerformed(InputAction.CallbackContext context)
-    {
-        SlideStart();
-    }
-
-    private void SlideStart()
-    {
-        if (IsGrounded() && !sliding)
-        {
-            StartCoroutine(Slide());
-        }
-    }
-
     private IEnumerator Slide()
     {
+        if (!IsGrounded() || sliding) yield return null;
+
         Vector3 originalControllerCenter = controller.center;
         Vector3 newControllerCenter = originalControllerCenter;
         controller.height /= 2;
@@ -165,23 +165,21 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void JumpPerformed(InputAction.CallbackContext context)
-    {
-        Jump();
-    }
-
-    private void Jump()
+    private IEnumerator Jump()
     {
         if (IsGrounded())
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * gravity * -3f);
             controller.Move(playerVelocity * Time.deltaTime);
+            animator.Play(jumpAnimationID);
+            yield return new WaitForSeconds(jumpAnimationClip.length / animator.speed);
         }
     }
 
     private Vector3? CheckTurn(float turnValue)
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, .1f, turnLayer);
+
         if (hitColliders.Length != 0)
         {
             Tile tile = hitColliders[0].transform.parent.GetComponentInChildren<Tile>();
