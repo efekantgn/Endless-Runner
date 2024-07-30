@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Enums;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -147,20 +148,26 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Slide()
     {
-        if (sliding) yield return null;
+        if (!IsGrounded() || sliding)
+        {
+            Debug.Log("a");
+            yield return null;
+        }
+        else
+        {
+            Vector3 originalControllerCenter = controller.center;
+            Vector3 newControllerCenter = originalControllerCenter;
+            controller.height /= 2;
+            newControllerCenter.y -= controller.height / 2;
+            controller.center = newControllerCenter;
 
-        Vector3 originalControllerCenter = controller.center;
-        Vector3 newControllerCenter = originalControllerCenter;
-        controller.height /= 2;
-        newControllerCenter.y -= controller.height / 2;
-        controller.center = newControllerCenter;
-
-        sliding = true;
-        animator.Play(slidingAnimationID);
-        yield return new WaitForSeconds(slideAnimationClip.length / animator.speed);
-        controller.height *= 2;
-        controller.center = originalControllerCenter;
-        sliding = false;
+            sliding = true;
+            animator.Play(slidingAnimationID);
+            yield return new WaitForSeconds(slideAnimationClip.length / animator.speed);
+            controller.height *= 2;
+            controller.center = originalControllerCenter;
+            sliding = false;
+        }
 
     }
 
