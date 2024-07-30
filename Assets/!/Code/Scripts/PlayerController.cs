@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
     private void Swipe(Vector2 swipeDirection)
     {
         if (swipeDirection.x != 0) Turn(swipeDirection.x);
-        else if (swipeDirection.y == 1) StartCoroutine(Jump());
+        else if (swipeDirection.y == 1) Jump();
         else if (swipeDirection.y == -1) StartCoroutine(Slide());
 
     }
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
 
     private void JumpPerformed(InputAction.CallbackContext context)
     {
-        StartCoroutine(Jump());
+        Jump();
     }
 
     private void Turn(float turnValue)
@@ -147,7 +147,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Slide()
     {
-        if (!IsGrounded() || sliding) yield return null;
+        if (sliding) yield return null;
 
         Vector3 originalControllerCenter = controller.center;
         Vector3 newControllerCenter = originalControllerCenter;
@@ -160,19 +160,17 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(slideAnimationClip.length / animator.speed);
         controller.height *= 2;
         controller.center = originalControllerCenter;
-
         sliding = false;
 
     }
 
-    private IEnumerator Jump()
+    private void Jump()
     {
         if (IsGrounded())
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * gravity * -3f);
             controller.Move(playerVelocity * Time.deltaTime);
             animator.Play(jumpAnimationID);
-            yield return new WaitForSeconds(jumpAnimationClip.length / animator.speed);
         }
     }
 

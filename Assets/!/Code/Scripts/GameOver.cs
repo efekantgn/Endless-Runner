@@ -25,6 +25,10 @@ public class GameOver : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    public void LoadScene(int buildIndex)
+    {
+        SceneManager.LoadScene(buildIndex);
+    }
     public void SubmitScore()
     {
         StartCoroutine(SubmitScoreToLeaderbord());

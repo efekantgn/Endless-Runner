@@ -53,7 +53,7 @@ public class TileSpawner : MonoBehaviour
 
     private void SpawnObstacle()
     {
-        if (Random.value > .3f) return;
+        if (Random.value > .5f) return;
 
         GameObject obstaclePrefab = SelectRandomGameObjectFromList(obstacles);
         Quaternion newObstacleRotation = obstaclePrefab.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
@@ -77,7 +77,7 @@ public class TileSpawner : MonoBehaviour
         int currentPathLenght = Random.Range(minStraightTiles, maxStrightTiles);
         for (int i = 0; i < currentPathLenght; i++)
         {
-            SpawnTile(startingTile.GetComponent<Tile>(), (i % 3 == 0) ? true : false);
+            SpawnTile(startingTile.GetComponent<Tile>(), (i % 2 == 0) ? true : false);
         }
         SpawnTile(SelectRandomGameObjectFromList(turnTiles).GetComponent<Tile>(), false);
     }
